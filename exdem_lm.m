@@ -1,12 +1,5 @@
-function [empty,out,p_f] = exdem(x,p)
+function [w,L,p_f] = exdem_lm(w_orig,L_orig,lam,p)
 %This function calculates excess demand for Lucas Alvarez model
-
-empty = [];
-
-w = x(1:59);
-L = x(59+1:59+58);
-L = [1-sum(L);L];
-lam = x(59+58+1:end);
 
 alp = p.alp;
 bet = p.bet;
@@ -14,8 +7,6 @@ the = p.the;
 eta = p.eta;
 dist = p.dist;
 omeg = p.omeg;
-relp = p.relp;
-siz = p.siz;
 
 %make omeg easier to work with
 omeg = repmat(omeg,1,size(omeg,1));
@@ -61,9 +52,19 @@ B = bet^-bet * (1-bet)^(-1+bet);
 
 den = dist.*omeg;
 
+err = 1;
+err_out = 1;
+w = w_orig;
+L = L_orig;
+v = 1;
+u = 1;
+pm = ones(size(w))*2;
+while err_out>1e-9
+while err>1e-12
+
 options = optimset('Display','off','Jacobian','on');
 
-pm = fsolve(@(p) int_p(p,A,B,log(w),lam,bet,the,den),ones(size(w)),options);
+pm = fsolve(@(p) int_p(p,A,B,log(w),lam,bet,the,den),log(pm),options);
 pm = exp(pm);
 
 D = tsh(A,B,the,bet,w,pm,den,lam);
@@ -72,15 +73,19 @@ F = sum(D.*omeg,2);
 
 s = (alp*(1-(1-bet)*F))./((1-alp)*bet*F+alp*(1-(1-bet)*F));
 
-Z = real_ex_dem(w,L,s,F,D,omeg);
-Z = Z(1:58);
+w_new = w.*(1+v*real_ex_dem(w,L,s,F,D,omeg)./L);
 
-P = relp - alp^(-alp)*(1-alp)^(-1+alp)*(w./pm).^alp;
+err = norm(w_new - w);
 
-GDP = siz(1:59)-L(1:59).*w(1:59).*(1+(1-s(1:59)).*(1-F(1:59))./(bet*F(1:59)));
-
-out = [Z;P;GDP];
+w = w_new;
+end
 
 p_f = alp^(-alp)*(1-alp)^(-1+alp)*(w./pm).^alp.*pm;
+
+L_new = L.*(1+u*(w./p_f-mean(w./p_f)));
+L_new = L_new/sum(L_new);
+err_out = norm(L_new-L);
+L = L_new;
+end
 
 end

@@ -1,12 +1,5 @@
-function [empty,out,p_f] = exdem(x,p)
+function [w,L,lam,p_f] = exdem_alt(p)
 %This function calculates excess demand for Lucas Alvarez model
-
-empty = [];
-
-w = x(1:59);
-L = x(59+1:59+58);
-L = [1-sum(L);L];
-lam = x(59+58+1:end);
 
 alp = p.alp;
 bet = p.bet;
@@ -61,25 +54,27 @@ B = bet^-bet * (1-bet)^(-1+bet);
 
 den = dist.*omeg;
 
-options = optimset('Display','off','Jacobian','on');
+out_err = 1;
 
-pm = fsolve(@(p) int_p(p,A,B,log(w),lam,bet,the,den),ones(size(w)),options);
-pm = exp(pm);
+w = ones(59,1);
+L = p.siz/sum(p.siz);
+lam = ones(59,1);
 
-D = tsh(A,B,the,bet,w,pm,den,lam);
-
-F = sum(D.*omeg,2);
-
-s = (alp*(1-(1-bet)*F))./((1-alp)*bet*F+alp*(1-(1-bet)*F));
-
-Z = real_ex_dem(w,L,s,F,D,omeg);
-Z = Z(1:58);
-
-P = relp - alp^(-alp)*(1-alp)^(-1+alp)*(w./pm).^alp;
-
-GDP = siz(1:59)-L(1:59).*w(1:59).*(1+(1-s(1:59)).*(1-F(1:59))./(bet*F(1:59)));
-
-out = [Z;P;GDP];
+while out_err > 1e-6
+    
+    options = optimset('Display','iter','Jacobian','off','Algorithm','interior-point');
+    %options = optimset('Display','iter');
+    %lam = fmincon(@(x) fakeobj(x),lam,[],[],[],[],ones(59,1)*1e-8,ones(59,1)*100,@(x) lam_solve(x,A,B,bet,the,den,alp,relp,omeg,L),options);
+    %lam = fsolve(@(x) lam_solve(x,A,B,bet,the,den,alp,relp,omeg,L),lam,options);
+    lam = ktrlink(@(x) fakeobj(x),lam,[],[],[],[],ones(59,1)*1e-8,[],@(x) lam_solve(x,A,B,bet,the,den,alp,relp,omeg,L),options);
+    [~,w,F,S,pm] = lam_solve(lam,A,B,bet,the,den,alp,relp,omeg,L);
+    
+    eps = w.*(1+(1-S).*(1-F)./(bet*F));
+    new_L = (siz./eps)/sum(siz./eps);
+    out_err = norm(new_L-L)
+    L = max(new_L,1e-9);
+    L = L/sum(L);
+end
 
 p_f = alp^(-alp)*(1-alp)^(-1+alp)*(w./pm).^alp.*pm;
 
