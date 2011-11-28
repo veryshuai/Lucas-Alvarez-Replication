@@ -21,7 +21,7 @@ v = 1;
 
 while err>1e-6
 
-options = optimset('Display','off','Jacobian','on');
+options = optimset('Display','off','Jacobian','on','MaxIter',1000);
 
 pm = fsolve(@(p) int_p(p,A,B,log(w),lam,bet,the,den),ones(size(w)),options);
 pm = exp(pm);

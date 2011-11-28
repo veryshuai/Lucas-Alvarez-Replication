@@ -41,7 +41,7 @@ omeg = (100-[5.4;5.48;5.86;11.49;5.86;5.86;5.86;18.58;13.73;5.1;5.86;...
     16.03;30.77;24.06;15.15;12.63;1.15;6.88;31.17;7.67])/100;
 
 %doesn't make sense to talk about distance with rest of the world
-siz_NOROW = [siz(1:3);siz(5:end)];
+siz_NOROW = [siz(1:3);siz(5:end)]/sum([siz(1:3);siz(5:end)]);
 relp_NOROW = [relp(1:3);relp(5:end)];
 omeg_NOROW = [omeg(1:3);omeg(5:end)];
 
@@ -49,8 +49,10 @@ p.siz = siz_NOROW;
 p.relp = relp_NOROW;
 p.omeg = omeg_NOROW;
 
-[w,L,lam,pf] = exdem_alt_alt(p);
-%[w,L,lam,p_f] = exdem_alt(p);
+%[w,L,lam,pf] = exdem_alt_alt(p);
+%[w,L,lam,pf] = exdem_alt_alt_alt(p);
+%[w,L,lam,pf] = exdem_ga(p);
+[w,L,lam,pf,pm,eps] = exdem_s(p);
 
 % 
 % pat = ones(58+2*59);
@@ -74,15 +76,23 @@ p.omeg = omeg_NOROW;
 %options = optimset('Display','iter');
 %sol_nt = ktrlink(@(x) fakeobj(x),sol(1:59),[],[],[],[],zeros(59,1),ones(59,1)*inf,@(x) exdem_no_tf(x,p,L,lam),options);
 
+[w,L,lam]
+
 [w_nt,pf_nt] = exdem_no_tf(w,L,lam,p);
 
-wel_nt = ((w_nt./pf_nt)-(w./pf))./(w./pf);
+wel_nt = ((w_nt./pf_nt)-(eps./pf))./(eps./pf);
+
+tot_wel_nt = (sum((w_nt./pf_nt).*L)-sum((eps./pf).*L))./sum(eps./pf.*L);
+
+save results
 
 %now keep tariffs, but let labor move freely
 
-[w_lm,L_lm,pf_lm] = exdem_lm(w,L,lam,p);
+[w_lm,L_lm,pf_lm,eps_lm] = exdem_lm(w,L,lam,p);
 
-wel_lm = ((w_lm./pf_lm)-(w./pf))./(w./pf);
+wel_lm = ((eps_lm./pf_lm)-(eps./pf))./(eps./pf);
+
+tot_wel_lm = (sum((eps_lm./pf_lm).*L_lm)-sum((eps./pf).*L))./sum(eps./pf.*L);
 
 toc;
 diary off

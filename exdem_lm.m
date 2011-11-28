@@ -1,4 +1,4 @@
-function [w,L,p_f] = exdem_lm(w_orig,L_orig,lam,p)
+function [w,L,p_f,eps] = exdem_lm(w_orig,L_orig,lam,p)
 %This function calculates excess demand for Lucas Alvarez model
 
 alp = p.alp;
@@ -52,37 +52,49 @@ B = bet^-bet * (1-bet)^(-1+bet);
 
 den = dist.*omeg;
 
-err = 1;
 err_out = 1;
+maxits = 500;
 w = w_orig;
 L = L_orig;
 v = 1;
 u = 1;
 pm = ones(size(w))*2;
 while err_out>1e-9
-while err>1e-12
+err = 1;
+it = 0;
+    while err > 1e-3
+            
+            options = optimset('Display','off','Jacobian','on','MaxIter',1000,'TolX',1e-10,'TolFun',1e-10);
 
-options = optimset('Display','off','Jacobian','on');
+            %pm = ktrlink(@(x) fakeobj(x),pm,[],[],[],[],zeros(59,1),ones(59,1)*inf,@(x) int_p(x,A,B,log(w),lam,bet,the,den),options);
+            pm = fsolve(@(x) int_p(x,A,B,log(w),lam,bet,the,den),pm,options);
+            pm = exp(pm);
 
-pm = fsolve(@(p) int_p(p,A,B,log(w),lam,bet,the,den),log(pm),options);
-pm = exp(pm);
-
-D = tsh(A,B,the,bet,w,pm,den,lam);
-
-F = sum(D.*omeg,2);
-
-s = (alp*(1-(1-bet)*F))./((1-alp)*bet*F+alp*(1-(1-bet)*F));
-
-w_new = w.*(1+v*real_ex_dem(w,L,s,F,D,omeg)./L);
-
-err = norm(w_new - w);
-
-w = w_new;
+            D = tsh(A,B,the,bet,w,pm,den,lam);
+            F = sum(D.*omeg,2);
+            s = (alp-alp*(1-bet)*F)./(alp-(alp-bet)*F);
+            
+            new_w = w.*(1+real_ex_dem(w,L,s,F,D,omeg)./L);
+            
+            err = norm(real_ex_dem(w,L,s,F,D,omeg));
+            %err = norm(new_w - w);
+            w = max(abs(new_w),1e-2);
+            it = it + 1;
+            if it > maxits
+                %display('did not converge')
+                %w
+                %L
+                %lam
+                %den
+                break;
+            end
 end
-
+eps = w.*(1+((1-s).*(1-F))./(bet*F));
+eps = abs(eps); %just in case
+    
 p_f = alp^(-alp)*(1-alp)^(-1+alp)*(w./pm).^alp.*pm;
 
-L_new = L.*(1+u*(w./p_f-mean(w./p_f)));
+L_new = L.*(1+u*(eps./p_f-mean(eps./p_f)));
 L_new = L_new/sum(L_new);
 err_out = norm(L_new-L);
 L = L_new;
