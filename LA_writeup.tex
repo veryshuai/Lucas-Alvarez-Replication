@@ -2,6 +2,8 @@
 \documentclass{article}
 \usepackage{amsmath,amsfonts,amsthm,amssymb}
 \usepackage{natbib}
+\usepackage{endfloat}
+\usepackage[margin = 1in]{geometry}
 
 \title{Comparing Further Gains from Trade to Gains from Labor Migration}
 \author{David Jinkins}
@@ -10,9 +12,155 @@
 \maketitle
 
 \section{Introduction}
-In a recent article, Michael Clemens points out that although there are many papers calculating welfare gains from tariffs reduction, there are very few studies looking at gains from reducing barriers to labor migration--even though the latter gains are potentially much larger \citep{Clemens2011} . \citet{AlvarezLucas2007} is a recent study analysing gains from tariff reduction.  Using a modified Eaton-Kortum model to allow for tariff revenues to be passed back to consumers, the Alvarez-Lucas model implies a world aggregate welfare gain of about .5\% from reducing current tariffs to zero.  In this paper, I use the Alvarez-Lucas model to caculate gains to free labor migration.  The benchmark model implies welfare gains of about 8/%, or welfare gains 16 times larger than those from eliminating tariffs.\footnote{Although not directly comparable to welfare, it is instructive to note that .5/% of current world GDP is about 315 billion dollars, and 8/% is about 5 trillion dollars--about the size of Japan's GDP.      
+In a recent article, Michael Clemens points out that although there are many papers calculating welfare gains from tariff reduction, there are very few studies looking at gains from reducing barriers to labor migration--even though the latter gains are potentially much larger than the former \citep{Clemens2011} . One well-known tariff reduction paper is \citet{AlvarezLucas2007}.  Using a modified Eaton-Kortum model to allow tariff revenues to be passed back to consumers, the Alvarez-Lucas model implies a world aggregate welfare gain of about .5\% from reducing current tariffs to zero.  In this paper, I use the Alvarez-Lucas model to calculate gains to free labor migration.  The benchmark model implies welfare gains of about 8\%, or welfare gains 16 times larger than those from eliminating tariffs.\footnote{Although not directly comparable to welfare, it is instructive to note that .5\% of current world GDP is about \$315 billion, and 8\% is about \$5 trillion at current prices--three times the GDP of the continent of Africa.}    Although in LA reducing tariffs unambiguously increases welfare, people living in very high technology countries are harmed by free labor mobility. 
 
+\section{Model}
+Here I present the estimation equations from the Alvarez-Lucas model without the derivations, which can be found in the original paper \citep{AlvarezLucas2007}.  Although Alvarez and Lucas consider 60 countries-really 59 countries and the rest of the world-I only consider 59 countries.  The reason is that AL model trade costs as literaly distance between capitals.  Since I do not know how to treat bilateral distance with ``the rest of the world,'' I just drop rest of the world.\footnote{At somepoint I will shoot AL an email and ask them how they did this.}  Besides the $59^2-59$ bilateral distances, each country has three parameters associated with it.  One is the technology parameter $\lambda$, another is the tariff level $\omega$, and also ``equipped'' population.  The reason the population is equipped is that labor is the only input in production, so we should really think of labor as a labor-capital mix.  The home country tariff level is applied to each foreign country indiscriminately.  Well, almost.  If a pair of countries has a bilateral trade agreement, then there is no tariff between the two countries.  Otherwise, each foreign country faces the same tariff level in the home country.  The technology parameter governs the distribution of technologies available in a country.  The higher the technology parameter, the stochastically better the technology distribution.
 
-\bibliographystyle{plainnat}
-\bibliography{biglist}
+The unknowns of the model to be estimated are the wages in each country, the technology parameter in each country, and the effective labor force in each country.  There are also four parameters calibrated by LA.  I list the parameter values and descriptions in Table \ref{parameters}.
+\begin{table}
+\begin{center}
+\begin{tabular}{|l|c|c|}
+\hline
+\textbf{Calibrated Parameters} & & \\
+\hline
+ Elasticity of substitution-intermediate varieties 	& $\eta$ 	& 2.00\\
+\hline
+ Final production Cobb-Douglas labor share		& $\alpha$ 	& 0.75\\
+\hline
+ Intermediate production Cobb-Douglas labor share	 & $\beta$ 	& 0.50\\
+\hline
+ Technology distribution amplification parameter	 & $\theta$ 	& 0.15\\
+\hline
+\textbf{Estimated Parameters} & & \\
+\hline
+Technology parameter in i	  			& $\lambda_i$ 	&     \\
+\hline
+World labor share in i	  				& $L_i$ 	&     \\
+\hline
+Nominal wage in i 		  			& $w_i$ 	&     \\
+\hline
+\textbf{Other Notation} & & \\
+\hline
+ Wage in i adjusted for tariff reciepts			& $\xi_i$	& \\
+\hline
+ i's gross intermediate expenditure share on j goods	& $D_{ij}$	& \\
+\hline
+ i's net intermediate expenditure share returning to j	& $F_{ij}$	& \\
+\hline
+ Share of i's labor devoted to final goods		& $s_i$		& \\
+\hline
+ Transport and tariff costs shipping from i to j	& $\kappa_{ij} \omega_{ij}$& \\
+\hline
+ Price of final good in i				& $p_i$		& \\
+\hline
+ Price of intermediate good in i			& $p_{mi}$	& \\
+\hline
+\end{tabular}
+\end{center}
+\caption{Parameters and Notation}
+\label{parameters}
+\end{table}
+
+Now we can present the estimation equations.  There are 3 conditions for each country, giving $3\times59$ equalities in the same number of variables.  The first condition is zero excess demand, the second is that GDP shares should match those in the data, and the third is that final to intermediate good price ratios should match those in the data.\footnote{All data values are taken from LA, except distance values which were not reported in the paper.  The source, CEPII, was reported, so I downloaded the values myself.  The other possible difference is that although LA report which bilateral trade agreements they used, they did not specify which year.  Since groups like the EU are changing rapidly, I had to make a decision about which time period to consider.  I chose to use membership as of 2003, since this is around when early drafts of AL were circulated.}  Below the left hand side is data, and the right hand side is the models implied value.  For country i:
+
+\begin{align}
+ 0 &= \frac{1}{w_i}\left[\sum_{j=1}^{59} L_j \frac{w_j(1-s_j(w,\lambda))}{F_j(w,\lambda)}D_{ji}(w,\lambda)\omega_{ji} - L_i w_i (1-s_i(w,\lambda))\right] \label{ED}\\
+ Y_i &= \frac{L_i \xi_i(w,\lambda)}{\sum_j L_j \xi_j(w,\lambda)} \label{GDP}\\
+ P_i &= \alpha^{-\alpha}(1-\alpha)^{-1+\alpha}\left(\frac{w_i}{p_{mi}(w,\lambda)}\right)^\alpha \label{price}
+\end{align}
+
+Estimating these equations was a bit difficult.  The parameter space is too large to effectively use any MATLAB solvers to solve all of these non-linear equations simultaneously.  LA give very nice algorithms for updating wages and labor. \footnote{Note that (\ref{GDP}) is essentially linear in labor, and (\ref{ED}) does not depend upon intermediate prices.} However, I could not find a nice algorithm for updating $\lambda$.  Part of the problem is that $\lambda$ affects (\ref{price}) through $p_m$, the price of intermediate goods, which is itself the solution to a fixed point problem.  The effect of $\lambda$ on the fixed point solution is complicated.  In any case, I ended up just using a MATLAB solver in an outer loop to solve for $\lambda$, using the LA algorithms to get $L$ and $w$ in each iteration.  After having trouble with gradient based methods, I switched to Nelder-Meade.  Although the process converged, it took a long time.  The estimation program is available on my website (not really--yet). 
+
+Once the estimation is complete, we can use the estimated parameter values to run counterfactuals.  Among other exercises, LA shut down tariffs while fixing $\lambda$ and $L$ and solve for wages.  They find relatively small gains from this exercise.  I perform the same exercise and get results qualitatively similar to those reported in LA.  Next I perform the benchmark analysis--reducing labor barriers to zero.  I assume that technology is not mobile, but that labor will migrate until the real wage is the same all over the world.  The goal is to estimate new labor and nominal (and real) wages.\footnote{You might expect that labor will now be perfectly proportional to $\lambda$.  My intuition is that this would be true if there were no tariffs, but tariffs break the nice relationship.  It is not true in my estimation results.}  I take the $\lambda$ estimated above, and use condition (\ref{ED}) and a new condition:
+\begin{equation}
+\frac{\xi_i}{p_i} = \frac{1}{59}\sum_j \frac{\xi_j}{p_j}
+\end{equation}
+The updating rule for labor is:
+\[
+ L_{t+1} = L_{t} \left(1+u\left(\frac{\xi_i}{p_i} - \frac{1}{59}\sum_j \frac{\xi_j}{p_j}\right)\right),
+\]
+where $u$ is some fixed positive scalar.  In the program it is set to unity.
+
+\section{Results}
+
+I report the results in the following table:
+\begin{center}
+\begin{table}
+\begin{small}
+\begin{tabular}{|l|c|c|c|c|c|c|c|c|}
+\hline
+\textbf{Country} & $\xi$ / pf & $\lambda$ & L(\%) & $w_{nt}$/$pf_{nt}$ & $w_{lm}$/$pf_{lm}$ & $L_{lm}$(\%) & $\Delta$welnt(\%) & $\Delta$wellm(\%)\\ \hline
+\textbf{United States}&0.53&22.88&25.12&0.53&0.54&19.77&0.24&1.82\\\hline
+\textbf{Japan}&0.57&38.53&10.72&0.57&0.54&41.55&0.56&-4.71\\\hline
+\textbf{Germany}&0.55&8.35&5.93&0.55&0.54&8.65&0.33&-1.02\\\hline
+\textbf{France}&0.56&6.77&3.69&0.56&0.54&6.90&0.33&-2.53\\\hline
+\textbf{United Kingdom}&0.52&2.55&4.21&0.52&0.54&2.62&0.33&3.89\\\hline
+\textbf{Italy}&0.52&2.30&3.80&0.52&0.54&2.25&0.33&4.17\\\hline
+\textbf{China}&0.45&0.33&5.00&0.45&0.54&0.30&0.75&20.09\\\hline
+\textbf{Brazil}&0.50&1.21&2.64&0.50&0.54&0.64&0.56&8.60\\\hline
+\textbf{Canada}&0.52&1.28&1.99&0.52&0.54&1.16&0.24&3.67\\\hline
+\textbf{Spain}&0.53&1.52&1.75&0.53&0.54&1.45&0.34&2.05\\\hline
+\textbf{Mexico}&0.43&0.10&2.78&0.44&0.54&0.06&0.85&24.84\\\hline
+\textbf{India}&0.47&0.42&1.85&0.49&0.54&0.23&3.30&15.02\\\hline
+\textbf{Australia}&0.50&0.98&1.44&0.50&0.54&0.50&0.52&8.21\\\hline
+\textbf{Netherlands}&0.55&1.61&1.03&0.55&0.54&1.67&0.33&-1.67\\\hline
+\textbf{Russian Federation}&0.39&0.02&3.44&0.39&0.54&0.02&0.73&38.50\\\hline
+\textbf{Argentina}&0.50&0.58&1.06&0.50&0.54&0.26&0.47&8.38\\\hline
+\textbf{Switzerland}&0.57&2.00&0.64&0.57&0.54&1.64&1.57&-4.29\\\hline
+\textbf{Belgium}&0.56&1.39&0.61&0.56&0.54&1.44&0.33&-3.75\\\hline
+\textbf{Sweden}&0.56&1.34&0.58&0.56&0.54&1.39&0.35&-3.78\\\hline
+\textbf{Austria}&0.56&1.44&0.52&0.57&0.54&1.31&1.01&-4.08\\\hline
+\textbf{Turkey}&0.43&0.03&1.37&0.43&0.54&0.03&0.76&27.24\\\hline
+\textbf{Indonesia}&0.42&0.03&1.39&0.42&0.54&0.02&0.79&29.93\\\hline
+\textbf{Denmark}&0.55&0.70&0.46&0.55&0.54&0.73&0.34&-1.46\\\hline
+\textbf{Hong Kong PRC}&0.56&1.51&0.36&0.57&0.54&1.07&1.68&-3.97\\\hline
+\textbf{Norway}&0.57&1.18&0.34&0.58&0.54&1.07&1.17&-5.25\\\hline
+\textbf{Thailand}&0.44&0.05&0.94&0.44&0.54&0.04&0.93&23.11\\\hline
+\textbf{Poland}&0.44&0.03&0.95&0.44&0.54&0.03&0.81&23.70\\\hline
+\textbf{Saudia Arabia}&0.44&0.04&0.88&0.45&0.54&0.04&0.78&22.03\\\hline
+\textbf{South Africa}&0.44&0.05&0.92&0.44&0.54&0.03&0.89&24.22\\\hline
+\textbf{Finland}&0.54&0.36&0.36&0.54&0.54&0.37&0.36&1.05\\\hline
+\textbf{Greece}&0.49&0.12&0.49&0.49&0.54&0.11&0.35&9.94\\\hline
+\textbf{Portugal}&0.48&0.07&0.51&0.48&0.54&0.06&0.35&13.93\\\hline
+\textbf{Israel}&0.58&1.00&0.21&0.58&0.54&0.81&0.93&-6.44\\\hline
+\textbf{Iran}&0.38&0.00&1.12&0.38&0.54&0.00&1.12&42.98\\\hline
+\textbf{Colombia}&0.44&0.03&0.59&0.45&0.54&0.02&0.78&22.40\\\hline
+\textbf{Venezuela}&0.44&0.03&0.54&0.45&0.54&0.02&0.52&22.15\\\hline
+\textbf{Malaysia}&0.44&0.03&0.56&0.44&0.54&0.02&0.84&23.72\\\hline
+\textbf{Singapore}&0.60&2.11&0.16&0.61&0.54&1.25&1.67&-9.41\\\hline
+\textbf{Ireland}&0.52&0.16&0.25&0.52&0.54&0.16&0.34&3.60\\\hline
+\textbf{Egypt}&0.32&0.00&1.73&0.33&0.54&0.00&2.11&69.71\\\hline
+\textbf{Philippines}&0.44&0.02&0.50&0.44&0.54&0.02&0.77&24.44\\\hline
+\textbf{Chile}&0.46&0.06&0.35&0.47&0.54&0.03&0.82&16.82\\\hline
+\textbf{Pakistan}&0.50&0.18&0.21&0.53&0.54&0.08&5.37&8.36\\\hline
+\textbf{New Zealand}&0.53&0.33&0.17&0.53&0.54&0.14&1.12&2.88\\\hline
+\textbf{Peru}&0.45&0.03&0.32&0.45&0.54&0.01&0.79&20.43\\\hline
+\textbf{Czech Republic}&0.39&0.00&0.56&0.40&0.54&0.00&0.83&37.93\\\hline
+\textbf{Algeria}&0.46&0.03&0.25&0.47&0.54&0.02&1.63&16.46\\\hline
+\textbf{Hungary}&0.40&0.00&0.42&0.41&0.54&0.00&0.73&34.33\\\hline
+\textbf{Ukraine}&0.31&0.00&1.23&0.31&0.54&0.00&0.81&75.93\\\hline
+\textbf{Bangladesh}&0.46&0.02&0.24&0.46&0.54&0.02&1.25&18.99\\\hline
+\textbf{Romania}&0.37&0.00&0.49&0.37&0.54&0.00&0.84&47.67\\\hline
+\textbf{Morocco}&0.42&0.01&0.24&0.44&0.54&0.00&2.75&27.58\\\hline
+\textbf{Nigeria}&0.44&0.01&0.21&0.45&0.54&0.01&1.57&22.13\\\hline
+\textbf{Vietnam}&0.33&0.00&0.49&0.33&0.54&0.00&0.83&63.71\\\hline
+\textbf{Belarus}&0.34&0.00&0.47&0.34&0.54&0.00&0.78&61.63\\\hline
+\textbf{Kazakhstan}&0.34&0.00&0.37&0.35&0.54&0.00&1.53&58.74\\\hline
+\textbf{Slovak Republic}&0.37&0.00&0.24&0.37&0.54&0.00&0.84&47.05\\\hline
+\textbf{Tunisia}&0.39&0.00&0.18&0.41&0.54&0.00&2.84&37.17\\\hline
+\textbf{Sri Lanka}&0.41&0.00&0.13&0.41&0.54&0.00&0.94&33.32\\\hline
+\end{tabular}
+\end{small}
+\caption{Results}
+\label{results}
+\end{table}
+\end{center}
+
+The countries are listed in order of world GDP share.  Note that the real wages and technology estimates fit with what we would expect.  West Europe, the United States, and Japan have both high real wages and high technology parameters.  The labor estimation is a bit odd, since China's labor population is about one fourth of that in the United States.  In reality, the US population is about one fourth of China's population.  The reason for the strange result is that in the model labor is equipped labor-labor and capital mixed together.  Since I am interested to the gains to unequipped labor, I am underestimating the worldwide gains from migration big time, especially if we think that capital is free to flow to where it is most efficiently used.  On the other hand, labor in rich countries is more educated, so effective labor would push back in the other direction.  If I decide to do anything with this paper, I think being careful about how to separate these things in data is the next step.  Although tariff reductions benefit everyone in the world unambiguously, people living in high productivity countries can be hurt by labor migration.  In essence, they are no longer able to extract rents from having a large number of the best production technologies located at home.  On the other hand, the biggest gains go to the poorest people from countries with crap technology to begin with.  People from Egypt and Ukraine have a 70\% increase in welfare under open migration!
+
+As stated in the introduction, if I multiply the welfare changes country by country by their initial population, I get about an 8\% increase in worldwide welfare.  This is again weighting by equipped labor.  If I was weighting by head, my intuition is that the gains would be much larger.     
+
+\bibliographystyle{plainnat.bst}
+\bibliography{biglist.bib}
 \end{document}
