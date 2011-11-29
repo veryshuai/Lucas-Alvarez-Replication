@@ -84,8 +84,6 @@ wel_nt = ((w_nt./pf_nt)-(eps./pf))./(eps./pf);
 
 tot_wel_nt = (sum((w_nt./pf_nt).*L)-sum((eps./pf).*L))./sum(eps./pf.*L);
 
-save results
-
 %now keep tariffs, but let labor move freely
 
 [w_lm,L_lm,pf_lm,eps_lm] = exdem_lm(w,L,lam,p);
@@ -93,6 +91,23 @@ save results
 wel_lm = ((eps_lm./pf_lm)-(eps./pf))./(eps./pf);
 
 tot_wel_lm = (sum((eps_lm./pf_lm).*L_lm)-sum((eps./pf).*L))./sum(eps./pf.*L);
+
+out_table = [eps./pf,lam,L,w_nt./pf_nt,w_lm./pf_lm,L_lm,wel_nt,wel_lm];
+
+col_labs = {'$\xi$/ pf','$\lam$','L','$w_{nt}$/$pf_{nt}$','$w_{lm}$/$pf_{lm}$','$L_{lm}$','$\Delta$wel\_nt','$\Delta$wel\_lm'};
+
+row_labs = {'United States','Japan','Germany','France','United Kingdom','Italy',...
+    'China','Brazil','Canada','Spain','Mexico','India','Australia','Netherlands',...
+    'Russian Federation','Argentina','Switzerland','Belgium','Sweden','Austria',...
+    'Turkey','Indonesia','Denmark','Hong Kong PRC','Norway','Thailand','Poland','Saudia Arabia',...
+    'South Africa','Finland','Greece','Portugal','Israel','Iran','Colombia','Venezuela',...
+    'Malaysia','Singapore','Ireland','Egypt','Philippines','Chile','Pakistan','New Zealand',...
+    'Peru','Czech Republic','Algeria','Hungary','Ukraine','Bangladesh','Romania',...
+    'Morocco','Nigeria','Vietnam','Belarus','Kazakhstan','Slovak Republic','Tunisia','Sri Lanka'};  
+
+matrix2latex(out_table,'lat_table.tex','rowLabels',row_labs,'columnLabels',col_labs,'alignment','c','size','tiny');
+
+save results
 
 toc;
 diary off
