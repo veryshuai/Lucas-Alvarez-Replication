@@ -92,9 +92,9 @@ wel_lm = ((eps_lm./pf_lm)-(eps./pf))./(eps./pf);
 
 tot_wel_lm = (sum((eps_lm./pf_lm).*L_lm)-sum((eps./pf).*L))./sum(eps./pf.*L);
 
-out_table = [eps./pf,lam,L,w_nt./pf_nt,w_lm./pf_lm,L_lm,wel_nt,wel_lm];
+out_table = [eps./pf,lam,L*100,w_nt./pf_nt,eps_lm./pf_lm,L_lm*100,wel_nt*100,wel_lm*100];
 
-col_labs = {'$\xi$/ pf','$\lam$','L','$w_{nt}$/$pf_{nt}$','$w_{lm}$/$pf_{lm}$','$L_{lm}$','$\Delta$wel\_nt','$\Delta$wel\_lm'};
+col_labs = {'$\xi$/ pf','$\lam$','L','$w_{nt}$/$pf_{nt}$','$\xi_{lm}$/$pf_{lm}$','$L_{lm}$','$\Delta$wel\_nt','$\Delta$wel\_lm'};
 
 row_labs = {'United States','Japan','Germany','France','United Kingdom','Italy',...
     'China','Brazil','Canada','Spain','Mexico','India','Australia','Netherlands',...
@@ -105,7 +105,7 @@ row_labs = {'United States','Japan','Germany','France','United Kingdom','Italy',
     'Peru','Czech Republic','Algeria','Hungary','Ukraine','Bangladesh','Romania',...
     'Morocco','Nigeria','Vietnam','Belarus','Kazakhstan','Slovak Republic','Tunisia','Sri Lanka'};  
 
-matrix2latex(out_table,'lat_table.tex','rowLabels',row_labs,'columnLabels',col_labs,'alignment','c','size','tiny');
+matrix2latex(out_table,'lat_table.tex','rowLabels',row_labs,'columnLabels',col_labs,'format','%.2f','alignment','c','size','small');
 
 save results
 
